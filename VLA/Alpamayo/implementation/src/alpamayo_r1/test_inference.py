@@ -53,24 +53,6 @@ print(f"  -> {image_frames.shape[0]} cameras, {image_frames.shape[1]} frames per
 flattened_frames = data["image_frames"].flatten(0, 1)
 print(f"Flattened image frames shape (model input): {flattened_frames.shape}")
 
-flattened_dir = output_dir / "model_input"
-flattened_dir.mkdir(exist_ok=True)
-
-for idx in range(flattened_frames.shape[0]):
-    img_tensor = flattened_frames[idx]
-    img_np = img_tensor.permute(1, 2, 0).cpu().numpy()
-    
-    # Convert from float [0, 1] to uint8 [0, 255] if needed
-    if img_np.max() <= 1.0:
-        img_np = (img_np * 255).astype(np.uint8)
-    else:
-        img_np = img_np.astype(np.uint8)
-    
-    # Save image with sequential numbering
-    img = Image.fromarray(img_np)
-    img.save(flattened_dir / f"input_{idx:02d}.png")
-
-print(f"Saved {flattened_frames.shape[0]} flattened images to {flattened_dir}/ (these are what the model sees)")
 
 messages = helper.create_message(data["image_frames"].flatten(0, 1))
 
@@ -161,7 +143,7 @@ if num_images > 0:
     # Add text on top margin
     draw = ImageDraw.Draw(combined_image)
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 70)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 100)
     except:
         font = ImageFont.load_default()
     
